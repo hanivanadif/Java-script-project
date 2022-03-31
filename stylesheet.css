@@ -136,7 +136,7 @@ button:hover {
 
 }
 .number, .empty{
-    background-color: #eaedef;
+      background-color: #adadad;
 }
 .operator{
     background-color:lightgrey;
