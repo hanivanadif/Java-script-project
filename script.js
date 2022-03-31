@@ -1,204 +1,79 @@
-let $buttons = document.querySelectorAll("button");
-let ui = document.querySelector(".userEntry");
-let finalCalc = document.querySelector(".finalCalc");
-let opPressed = false;
-
-let valOne = [];
-let valTwo = [];
-var operator = [];
-let finalAnswer = 0;
-
-
-[...$buttons].map(x => {
-    x.addEventListener("click", function (e) {
-
-        switch (this.innerHTML) {
-            case "AC":
-                clearDisplay();
-                break;
-            case "DEL":
-                removeNumber();
-                break;
-            case "+/-":
-                makeNegative();
-                break;
-            case "=":
-                makeCalculation();
-                break;    
-            case "+":
-                operator.splice(0, 1, this.innerHTML)
-                console.log(operator);
-
-                storeValue();
-                break;
-            case "*":
-                operator.splice(0, 1, this.innerHTML)
-                console.log(operator);
-
-                storeValue();
-                break;
-            case "/":
-                operator.splice(0, 1, this.innerHTML)
-                console.log(operator);
-
-                storeValue();
-                break;
-            case "-":
-                operator.splice(0, 1, this.innerHTML);
-                console.log(operator);
-                storeValue();
-                break;
-            default:
-                 if (valOne.length >11) {
-                    alert("No more values beyond 8");
+function getHistory(){
+    return document.getElementById("history-value").innerText;
+}
+function printHistory(num){
+    document.getElementById("history-value").innerText=num;
+}
+function getOutput(){
+    return document.getElementById("output-values").innerText;
+}
+function printOutput(num){
+    if(num==""){
+    document.getElementById("output-values").innerText=num;
+    }
+    else{
+        document.getElementById("output-values").innerText=getFormattedNumber(num);
+    }
+}
+function getFormattedNumber(num){
+    if(num=="-"){
+        return "";
+    }
+    var n=Number(num);
+    var value= n.toLocaleString("en");
+    return value;
+}
+function reverseNumberFormat(num){
+    return Number(num.replace(/,/g, ''));
+}
+var operator = document.getElementsByClassName("operator");
+for( var i=0;i<operator.length;i++){
+    operator[i].addEventListener('click',function(){
+            if(this.id=="clear"){
+                printHistory("");
+                printOutput("");
+            }
+            else if(this.id=="backspace"){
+                var
+                output=reverseNumberFormat(getOutput()).toString();
+                if(output){//if output has a value
+                    output= output.substr(0,output.length-1);
+                printOutput(output);
                 }
-
-                 else {
-
-                    valOne.push(this.innerText);
-                    ui.textContent = valOne.join("");
-                    console.log(valOne);
-
+            }
+            else{
+                var output = getOutput();
+                var history = getHistory();
+                if(output==""&&history!=""){
+                    if(isNaN(history[history.length-1])){
+                        history=history.substr(0,history.length-1);
+                    }
                 }
-                break;
-            case ".":
-                if (valOne.includes(".")) {
-                    alert("You cannot use anymore decimals");
-                } else {
-                    valOne.push(this.innerText);
-                    ui.textContent = valOne.join("");
-
+                if(output!="" || history!=""){
+                    output= output==""?
+                    output:reverseNumberFormat(output);
+                    history=history+output;
+                    if(this.id=="="){
+                        var result= eval(history);
+                        printOutput(result);
+                        printHistory("");
+                    }
+                    else{
+                        history=history+this.id;
+                        printHistory(history);
+                        printOutput("");
+                    }
                 }
-                break;
-
+            }
+    });
+}
+var number = document.getElementsByClassName("number");
+for(var i=0;i<number.length;i++){
+    number[i].addEventListener('click',function(){
+        var output=reverseNumberFormat(getOutput());
+        if(output!=NaN){
+            output=output+this.id;
+            printOutput(output);
         }
-
-    })
-})
-
-
-
-//function add(a, b) {
-
-//    return a + b;
-//}
-
-
-//function subtract(a, b) {
-//    return a - b;
-//}
-
-//function divide(a, b){
-
-//    return a / b;
-//}
-
-//function multiply(a, b){
-
-//    return a * b;
-//}
-
-//function module(a, b) {
-
-//    return a % b;
-//}
-
-
-
-function clearDisplay() {
-
-    ui.textContent = "";
-    finalCalc.textContent = ""
-    valOne = [];
-    valTwo = [];
-    operator = [];
-}
-
-function removeNumber(e) {
-
-    valOne.pop();
-    ui.textContent = valOne.join("");
-}
-
-
-function makeNegative() {
-
-    if (valOne.length < 1) {
-        return false;
-    }else if(valOne[0] == "-") {
-        valOne.shift()
-
-    } else {
-        valOne.unshift("-")
-
-    }
-    ui.textContent = valOne.join("");
-}
-
-function makeCalculation() {
-
-    if (valTwo.length > 0 && operator.length!==0) {
-        //finalAnswer = valTwo.concat(operator, valOne).join("");
-        finalAnswer = eval(valTwo + operator + valOne.join(""));
-        finalCalc.textContent = "";
-        finalCalc.textContent = eval(finalAnswer).toFixed(2);
-        ui.textContent = "";
-        valTwo = eval(finalAnswer);
-        valOne = [];
-        //operator = [];
-
-    } else if (operator.length == 0) {
-
-        alert("invalid calculation there is no operator");
-        
-    }
-
-    else {
-        //finalAnswer = valTwo.concat(operator, valOne).join
-        finalAnswer = finalAnswer = eval(valTwo + operator + valOne.join(""));
-
-        console.log("final answer");
-        console.log(finalAnswer);
-        finalCalc.textContent = "";
-        ui.textContent = "";
-        finalCalc.textContent = eval(finalAnswer).toFixed(2);
-        //operator = [];
-        valTwo = eval(finalAnswer);
-        valOne = [];
-
-
-
-    }
-
-
- 
-
-    
-}
-
-function storeValue() {
-
-
-
-
-        if (valOne.length == 0 && valTwo.length==0) {
-            return false;
-        } else if (valTwo.length > 0) {
-            finalCalc.textContent = valTwo + " " + operator;
-          
-
-            
-        }else if(valTwo.length==0) {
-            valTwo.push(valOne.join(""));
-            valOne = [];
-            ui.textContent = "";
-            finalCalc.textContent = "";
-            finalCalc.textContent = valTwo + " " + operator
-
-            
-    }
-        finalCalc.textContent = valTwo + " " + operator;
-
-       
-        
+    });
 }
